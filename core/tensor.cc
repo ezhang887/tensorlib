@@ -5,17 +5,7 @@
 
 using std::vector;
 
-Tensor::Tensor(Dtype dtype) {
-    dims_ = NULL;
-    strides_ = NULL;
-    dtype_ = dtype;
-    offset_ = 0;
-    num_dims_ = 0;
-
-    storage_ = std::make_shared<Storage>(Storage(dtype_to_size(dtype)));
-}
-
-Tensor::Tensor(vector<size_t> dims, Dtype dtype) {
+Tensor::Tensor(vector<size_t> dims, Dtype dtype, bool clear_memory) {
     num_dims_ = dims.size();
     dims_ = new size_t[num_dims_];
     for (size_t i = 0; i < num_dims_; i++) {
@@ -35,7 +25,7 @@ Tensor::Tensor(vector<size_t> dims, Dtype dtype) {
         total_bytes *= dim;
     }
 
-    storage_ = std::make_shared<Storage>(Storage(total_bytes));
+    storage_ = std::make_shared<Storage>(Storage(total_bytes, clear_memory));
 }
 
 Tensor::~Tensor() {

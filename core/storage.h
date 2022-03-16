@@ -12,7 +12,7 @@ class Storage {
         Storage(const Storage&) = delete;
         Storage& operator=(const Storage& other) = delete;
 
-        Storage(size_t bytes);
+        Storage(size_t bytes, bool clear_memory);
         Storage(Storage&&);
         Storage& operator=(Storage&& other);
         ~Storage();

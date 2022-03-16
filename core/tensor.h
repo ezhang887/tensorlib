@@ -21,9 +21,8 @@ class Tensor {
 
     public:
         Tensor() = delete;
-        Tensor(Dtype dtype);
         ~Tensor();
-        Tensor(vector<size_t> dims, Dtype dtype);
+        Tensor(vector<size_t> dims, Dtype dtype, bool clear_memory = false);
 
         template <typename T, size_t N>
         TensorAccessor<T, N> accessor() const {

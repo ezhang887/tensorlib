@@ -2,9 +2,13 @@
 
 #include <cstdlib>
 
-Storage::Storage(size_t bytes) {
+Storage::Storage(size_t bytes, bool clear_memory = false) {
     bytes_ = bytes;
-    data_ = malloc(bytes);
+    if (clear_memory) {
+        data_ = calloc(bytes, 1);
+    } else {
+        data_ = malloc(bytes);
+    }
 }
 
 Storage::Storage(Storage&& other) {
