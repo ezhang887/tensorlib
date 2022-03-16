@@ -1,7 +1,7 @@
 #pragma once
 
 enum class Dtype {
-INT8,
+  INT8,
   INT16,
   INT32,
   INT64,
