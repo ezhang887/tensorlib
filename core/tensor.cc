@@ -6,11 +6,11 @@
 
 Tensor::Tensor(std::vector<size_t> dims, Dtype dtype, bool clear_memory) {
   num_dims_ = dims.size();
-  dims_ = new size_t[num_dims_];
+  dims_ = (size_t *)malloc(num_dims_ * sizeof(size_t));
   for (size_t i = 0; i < num_dims_; i++) {
     dims_[i] = dims[i];
   }
-  strides_ = new size_t[num_dims_];
+  strides_ = (size_t *)malloc(num_dims_ * sizeof(size_t));
   offset_ = 0;
   dtype_ = dtype;
 
@@ -28,18 +28,18 @@ Tensor::Tensor(std::vector<size_t> dims, Dtype dtype, bool clear_memory) {
 }
 
 Tensor::~Tensor() {
-  if (dims_)
-    delete[] dims_;
-  if (strides_)
-    delete[] strides_;
+  if (dims_ && num_dims_ > 0)
+    free(dims_);
+  if (strides_ && num_dims_ > 0)
+    free(strides_);
 }
 
 Tensor::Tensor(size_t *dims, size_t *strides, size_t offset, Dtype dtype,
                size_t num_dims, std::shared_ptr<Storage> storage) {
   if (num_dims > 0) {
-    dims_ = new size_t[num_dims];
+    dims_ = (size_t *)malloc(num_dims * sizeof(size_t));
     memcpy(dims_, dims, num_dims * sizeof(size_t));
-    strides_ = new size_t[num_dims];
+    strides_ = (size_t *)malloc(num_dims * sizeof(size_t));
     memcpy(strides_, strides, num_dims * sizeof(size_t));
   } else {
     dims_ = nullptr;
@@ -56,6 +56,44 @@ Tensor Tensor::operator[](size_t i) {
   return Tensor(dims_ + 1, strides_ + 1,
                 offset_ + i * strides_[0] * dtype_to_size(dtype_), dtype_,
                 num_dims_ - 1, storage_);
+}
+
+Tensor::Tensor(const Tensor &other) {
+  num_dims_ = other.num_dims_;
+  offset_ = other.offset_;
+  dtype_ = other.dtype_;
+  storage_ = other.storage_;
+
+  if (other.dims_) {
+    dims_ = (size_t *)malloc(num_dims_ * sizeof(size_t));
+    memcpy(dims_, other.dims_, num_dims_ * sizeof(size_t));
+  }
+  if (other.strides_) {
+    strides_ = (size_t *)malloc(num_dims_ * sizeof(size_t));
+    memcpy(strides_, other.strides_, num_dims_ * sizeof(size_t));
+  }
+}
+
+void Tensor::operator=(const Tensor &other) {
+  num_dims_ = other.num_dims_;
+  offset_ = other.offset_;
+  dtype_ = other.dtype_;
+  storage_ = other.storage_;
+
+  if (other.dims_) {
+    dims_ = (size_t *)realloc(dims_, num_dims_ * sizeof(size_t));
+    memcpy(dims_, other.dims_, num_dims_ * sizeof(size_t));
+  } else {
+    free(dims_);
+    dims_ = NULL;
+  }
+  if (other.strides_) {
+    strides_ = (size_t *)realloc(strides_, num_dims_ * sizeof(size_t));
+    memcpy(strides_, other.strides_, num_dims_ * sizeof(size_t));
+  } else {
+    free(strides_);
+    strides_ = NULL;
+  }
 }
 
 std::ostream &operator<<(std::ostream &os, const Tensor &t) {

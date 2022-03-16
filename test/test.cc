@@ -54,4 +54,7 @@ int main() {
     }
     cout << endl;
   }
+
+  Tensor x = t;
+  x = t;
 }

@@ -29,6 +29,9 @@ public:
   Tensor operator[](size_t i);
   friend std::ostream &operator<<(std::ostream &os, const Tensor &t);
 
+  Tensor(const Tensor &other);
+  void operator=(const Tensor &other);
+
   template <typename T> void operator=(const T &other) {
     if (num_dims_ == 0) {
       assert(is_of_type<T>(dtype_));
