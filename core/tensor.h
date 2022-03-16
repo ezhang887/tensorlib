@@ -29,14 +29,10 @@ class Tensor {
 
         friend std::ostream& operator<<(std::ostream& os, const Tensor& t);
 
-        void operator=(const Tensor& other) {
-        }
-
         template <typename T>
         void operator=(const T& other) {
-            // TODO: verify type matches?
-
             if (num_dims_ == 0) {
+                assert (is_of_type<T>(dtype_));
                 void *data_raw = (char *) storage_->data() + offset_;
                 memcpy(data_raw, &other, sizeof(T));
             } else {
@@ -47,7 +43,7 @@ class Tensor {
         template <typename T, size_t N>
         TensorAccessor<T, N> accessor() const {
             assert (N == num_dims_);
-            // TODO: verify type matches?
+            assert (is_of_type<T>(dtype_));
 
             return TensorAccessor<T, N>((T *)((char *)storage_->data() + offset_), strides_, dims_);
         }
