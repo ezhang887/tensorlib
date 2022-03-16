@@ -16,4 +16,5 @@ class Storage {
         Storage(Storage&&);
         Storage& operator=(Storage&& other);
         ~Storage();
+        void* data() const;
 };

@@ -27,3 +27,7 @@ Storage::~Storage() {
         free(data_);
     }
 }
+
+void* Storage::data() const {
+    return data_;
+}
