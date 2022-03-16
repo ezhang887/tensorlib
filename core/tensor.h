@@ -4,6 +4,7 @@
 #include <memory>
 #include <iostream>
 #include <cassert>
+#include <cstring>
 
 #include "storage.h"
 #include "dtypes.h"
@@ -25,6 +26,23 @@ class Tensor {
         Tensor(std::vector<size_t> dims, Dtype dtype, bool clear_memory = false);
 
         Tensor operator[](size_t i);
+
+        friend std::ostream& operator<<(std::ostream& os, const Tensor& t);
+
+        void operator=(const Tensor& other) {
+        }
+
+        template <typename T>
+        void operator=(const T& other) {
+            // TODO: verify type matches?
+
+            if (num_dims_ == 0) {
+                void *data_raw = (char *) storage_->data() + offset_;
+                memcpy(data_raw, &other, sizeof(T));
+            } else {
+                // TODO?
+            }
+        }
 
         template <typename T, size_t N>
         TensorAccessor<T, N> accessor() const {

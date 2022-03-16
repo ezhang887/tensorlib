@@ -28,15 +28,21 @@ Tensor::Tensor(std::vector<size_t> dims, Dtype dtype, bool clear_memory) {
 }
 
 Tensor::~Tensor() {
-    delete[] dims_;
-    delete[] strides_;
+    if (dims_) delete[] dims_;
+    if (strides_) delete[] strides_;
 }
 
 Tensor::Tensor(size_t *dims, size_t *strides, size_t offset, Dtype dtype, size_t num_dims, std::shared_ptr<Storage> storage) {
-    dims_ = new size_t[num_dims];
-    memcpy(dims_, dims, num_dims * sizeof(size_t));
-    strides_ = new size_t[num_dims];
-    memcpy(strides_, strides, num_dims * sizeof(size_t));
+    if (num_dims > 0) {
+        dims_ = new size_t[num_dims];
+        memcpy(dims_, dims, num_dims * sizeof(size_t));
+        strides_ = new size_t[num_dims];
+        memcpy(strides_, strides, num_dims * sizeof(size_t));
+    } else {
+        dims_ = nullptr;
+        strides_ = nullptr;
+    }
+
     offset_ = offset;
     dtype_ = dtype;
     num_dims_ = num_dims;
@@ -44,5 +50,36 @@ Tensor::Tensor(size_t *dims, size_t *strides, size_t offset, Dtype dtype, size_t
 }
 
 Tensor Tensor::operator[](size_t i) {
-    return Tensor(dims_ + 1, strides_ + 1, i * strides_[0] * dtype_to_size(dtype_), dtype_, num_dims_ - 1, storage_);
+    return Tensor(dims_ + 1, strides_ + 1, offset_ + i * strides_[0] * dtype_to_size(dtype_), dtype_, num_dims_ - 1, storage_);
+}
+
+std::ostream& operator<<(std::ostream &os, const Tensor& t) {
+    if (t.num_dims_ == 0) {
+        void *data_raw = (char *) t.storage_->data() + t.offset_;
+        switch (t.dtype_) {
+            case Dtype::INT8:
+                os << *((int8_t *)data_raw);
+                return os;
+            case Dtype::INT16:
+                os << *((int16_t *)data_raw);
+                return os;
+            case Dtype::INT32:
+                os << *((int32_t *)data_raw);
+                return os;
+            case Dtype::INT64:
+                os << *((int64_t *)data_raw);
+                return os;
+            case Dtype::FLOAT:
+                os << *((float *)data_raw);
+                return os;
+            case Dtype::DOUBLE:
+                os << *((double *)data_raw);
+                return os;
+            default:
+                return os;
+        }
+    } else {
+        // TODO?
+    }
+    return os;
 }

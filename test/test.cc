@@ -19,11 +19,33 @@ int main() {
     */
 
     Tensor t({10, 20}, Dtype::INT32, true);
+    for (size_t i = 0; i < 10; i++) {
+        for (size_t j = 0; j < 20; j++) {
+            cout << t[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
 
+    /*
     Tensor u = t[1];
+    u[0] = 12345;
+    */
+
+    t[1][0] = 12345;
+
+    for (size_t i = 0; i < 10; i++) {
+        for (size_t j = 0; j < 20; j++) {
+            cout << t[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+    /*
     auto accessor = u.accessor<int32_t, 1>();
     accessor[0] = 12345;
     cout << accessor[0] << endl;
+    */
 
     auto accessor2 = t.accessor<int32_t, 2>();
     for (size_t i = 0; i < 10; i++) {
@@ -32,4 +54,5 @@ int main() {
         }
         cout << endl;
     }
+
 }
