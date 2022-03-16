@@ -1,0 +1,25 @@
+---
+name: Test + Lint
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build + test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: bazelbuild/setup-bazelisk@v1
+      - run: |
+          bazel build //...
+          bazel test //...
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          sudo apt install -y clang-format-10
+          find . -regex '.*\.\(cpp\|hpp\|cu\|cc\|h\)' -exec clang-format-10 -style=file --dry-run -Werror -i {} +;
