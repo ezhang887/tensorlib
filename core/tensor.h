@@ -50,5 +50,15 @@ public:
                                 strides_, dims_);
   }
 
+  template <typename T> T get_value() const {
+    assert(num_dims_ == 0);
+    assert(is_of_type<T>(dtype_));
+
+    void *data_ptr = (char *)storage_->data() + offset_;
+    return *((T *)data_ptr);
+  }
+
   bool is_contiguous() const;
+  std::vector<size_t> strides() const;
+  std::vector<size_t> dims() const;
 };

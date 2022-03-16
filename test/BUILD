@@ -1,9 +1,11 @@
-load("@rules_cc//cc:defs.bzl", "cc_binary")
+cc_test(
+  name = "tensor_test",
+  srcs = ["tensor_test.cc"],
+  deps = ["//core:tensorlib", "@com_google_googletest//:gtest_main"],
+)
 
-cc_binary(
-    name = "test",
-    srcs = ["test.cc"],
-    deps = [
-        "//core:tensorlib",
-    ],
+cc_test(
+  name = "accessor_test",
+  srcs = ["accessor_test.cc"],
+  deps = ["//core:tensorlib", "@com_google_googletest//:gtest_main"],
 )

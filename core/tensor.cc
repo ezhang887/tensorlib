@@ -128,10 +128,22 @@ std::ostream &operator<<(std::ostream &os, const Tensor &t) {
 }
 
 bool Tensor::is_contiguous() const {
-  for (size_t i = 0; i < num_dims_; i++) {
+  if (strides_[num_dims_ - 1] != 1) {
+    return false;
+  }
+
+  for (size_t i = 0; i < num_dims_ - 1; i++) {
     if (strides_[i] != strides_[i + 1] * dims_[i + 1]) {
       return false;
     }
   }
   return true;
+}
+
+std::vector<size_t> Tensor::strides() const {
+  return std::vector<size_t>(strides_, strides_ + num_dims_);
+}
+
+std::vector<size_t> Tensor::dims() const {
+  return std::vector<size_t>(dims_, dims_ + num_dims_);
 }
