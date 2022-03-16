@@ -2,13 +2,12 @@
 
 #include <vector>
 #include <memory>
+#include <iostream>
 #include <cassert>
 
 #include "storage.h"
 #include "dtypes.h"
 #include "accessor.h"
-
-using std::vector;
 
 class Tensor {
     private:
@@ -18,11 +17,14 @@ class Tensor {
         Dtype dtype_;
         size_t num_dims_;
         std::shared_ptr<Storage> storage_;
+        Tensor(size_t *dims, size_t *strides, size_t offset, Dtype dtype, size_t num_dims, std::shared_ptr<Storage> storage);
 
     public:
         Tensor() = delete;
         ~Tensor();
-        Tensor(vector<size_t> dims, Dtype dtype, bool clear_memory = false);
+        Tensor(std::vector<size_t> dims, Dtype dtype, bool clear_memory = false);
+
+        Tensor operator[](size_t i);
 
         template <typename T, size_t N>
         TensorAccessor<T, N> accessor() const {

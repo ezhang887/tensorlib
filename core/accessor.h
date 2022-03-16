@@ -29,7 +29,7 @@ class TensorAccessor<T, 1> : public TensorAccessorBase<T, 1> {
     public:
         TensorAccessor(T *data, size_t *strides, size_t *dims) : TensorAccessorBase<T, 1> (data, strides, dims) {}
 
-        T & operator[](size_t i) {
+        T& operator[](size_t i) {
             return this->data_[this->strides_[0] * i];
         }
 };

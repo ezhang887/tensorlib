@@ -1,11 +1,10 @@
 #include "tensor.h"
 
 #include <memory>
+#include <cstring>
 #include <iostream>
 
-using std::vector;
-
-Tensor::Tensor(vector<size_t> dims, Dtype dtype, bool clear_memory) {
+Tensor::Tensor(std::vector<size_t> dims, Dtype dtype, bool clear_memory) {
     num_dims_ = dims.size();
     dims_ = new size_t[num_dims_];
     for (size_t i = 0; i < num_dims_; i++) {
@@ -31,4 +30,19 @@ Tensor::Tensor(vector<size_t> dims, Dtype dtype, bool clear_memory) {
 Tensor::~Tensor() {
     delete[] dims_;
     delete[] strides_;
+}
+
+Tensor::Tensor(size_t *dims, size_t *strides, size_t offset, Dtype dtype, size_t num_dims, std::shared_ptr<Storage> storage) {
+    dims_ = new size_t[num_dims];
+    memcpy(dims_, dims, num_dims * sizeof(size_t));
+    strides_ = new size_t[num_dims];
+    memcpy(strides_, strides, num_dims * sizeof(size_t));
+    offset_ = offset;
+    dtype_ = dtype;
+    num_dims_ = num_dims;
+    storage_ = storage;
+}
+
+Tensor Tensor::operator[](size_t i) {
+    return Tensor(dims_ + 1, strides_ + 1, i * strides_[0] * dtype_to_size(dtype_), dtype_, num_dims_ - 1, storage_);
 }
