@@ -27,7 +27,6 @@ public:
   Tensor(std::vector<size_t> dims, Dtype dtype, bool clear_memory = false);
 
   Tensor operator[](size_t i);
-
   friend std::ostream &operator<<(std::ostream &os, const Tensor &t);
 
   template <typename T> void operator=(const T &other) {
@@ -47,4 +46,6 @@ public:
     return TensorAccessor<T, N>((T *)((char *)storage_->data() + offset_),
                                 strides_, dims_);
   }
+
+  bool is_contiguous() const;
 };

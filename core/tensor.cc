@@ -88,3 +88,12 @@ std::ostream &operator<<(std::ostream &os, const Tensor &t) {
   }
   return os;
 }
+
+bool Tensor::is_contiguous() const {
+  for (size_t i = 0; i < num_dims_; i++) {
+    if (strides_[i] != strides_[i + 1] * dims_[i + 1]) {
+      return false;
+    }
+  }
+  return true;
+}
